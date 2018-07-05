@@ -6,9 +6,9 @@ import (
 
 var blockchain []Block
 
-// CreateBlockchain creates the genesis block, adds it, and returns it after all
-func CreateBlockchain() Block {
-	gblock := GenerateGenesisBlock()
+// InitiateBlockchain creates the genesis block, adds it, and returns it after all
+func InitiateBlockchain() Block {
+	gblock := NewGenesisBlock()
 	blockchain = append(blockchain, gblock)
 
 	return gblock
@@ -19,7 +19,17 @@ func GetBlockchain() []Block {
 	return blockchain
 }
 
-// GetBlockCount return the length of the current state
+// GetGenesisBlock returns the first block in the chain
+func GetGenesisBlock() Block {
+	return blockchain[0]
+}
+
+// GetLatestBlock returns the latest block in the chain
+func GetLatestBlock() Block {
+	return blockchain[len(blockchain)-1]
+}
+
+// GetBlockCount return the height of the current state
 func GetBlockCount() int {
 	return len(blockchain)
 }
@@ -34,14 +44,27 @@ func AddBlock(newBlock Block) error {
 	return nil
 }
 
-// GetLatestBlock returns the latest block in the chain
-func GetLatestBlock() Block {
-	return blockchain[len(blockchain)-1]
+// ReplaceChain overrides the current state by the new one
+func ReplaceChain(givenBlockchain []Block) {
+	if isValidChain(givenBlockchain) {
+		blockchain = givenBlockchain
+	}
 }
 
-// ReplaceChain overrides the current state by the new one
-func ReplaceChain(newBlocks []Block) {
-	if len(newBlocks) > len(blockchain) {
-		blockchain = newBlocks
+func isValidChain(givenBlockchain []Block) bool {
+	if givenBlockchain[0].Data != GetGenesisBlock().Data {
+		return false
 	}
+
+	if len(givenBlockchain) <= GetBlockCount() {
+		return false
+	}
+
+	for i := 1; i < len(givenBlockchain); i++ {
+		if !givenBlockchain[i].IsBlockValid(givenBlockchain[i-1]) {
+			return false
+		}
+	}
+
+	return true
 }

@@ -11,16 +11,16 @@ func TestBlockchainEmptyBeforeCreation(t *testing.T) {
 }
 
 func TestGenesisBlockCreation(t *testing.T) {
-	gblock := CreateBlockchain()
+	gblock := InitiateBlockchain()
 
 	assert.Equal(t, "Genesis Block", gblock.Data, "Failed to create genesis block")
 	assert.Equal(t, 1, GetBlockCount(), "Blockchain should contain only the genesis block")
 }
 
 func TestAddNewBlock(t *testing.T) {
-	gblock := CreateBlockchain()
+	gblock := InitiateBlockchain()
 
-	nblock, err := GenerateNextBlock(gblock, "Block 1")
+	nblock, err := NewBlock(gblock, "Block 1")
 	assert.Nil(t, err)
 
 	err = AddBlock(nblock)
@@ -30,29 +30,29 @@ func TestAddNewBlock(t *testing.T) {
 }
 
 func TestNotAddAnyBlockTwice(t *testing.T) {
-	gblock := CreateBlockchain()
+	gblock := InitiateBlockchain()
 	err := AddBlock(gblock)
 	assert.NotNil(t, err)
 }
 
 func TestNotAcceptInvalidCandidateBlockWithEmptyData(t *testing.T) {
-	gblock := CreateBlockchain()
-	_, err := GenerateNextBlock(gblock, "")
+	gblock := InitiateBlockchain()
+	_, err := NewBlock(gblock, "")
 
 	assert.NotNil(t, err)
 	assert.Equal(t, 1, GetBlockCount(), "Blockchain should have only the genesis block")
 }
 
 func TestNotAcceptInvalidCandidateBlockWithWrongPrevious(t *testing.T) {
-	gblock := CreateBlockchain()
+	gblock := InitiateBlockchain()
 
-	block1, err := GenerateNextBlock(gblock, "Block 1")
+	block1, err := NewBlock(gblock, "Block 1")
 	assert.Nil(t, err)
 	err = AddBlock(block1)
 	assert.Nil(t, err)
 	assert.Equal(t, 2, GetBlockCount(), "Blockchain should contain 2 blocks")
 
-	_, err = GenerateNextBlock(gblock, "Block 2")
+	_, err = NewBlock(gblock, "Block 2")
 	assert.Nil(t, err)
 	assert.Equal(t, 2, GetBlockCount(), "Blockchain should still contain 2 blocks")
 }

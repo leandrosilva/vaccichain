@@ -11,6 +11,11 @@ import (
 
 var difficulty = 1
 
+// GetDifficulty returns the current difficulty level for miners
+func GetDifficulty() int {
+	return difficulty
+}
+
 // ChangeDifficulty stabilishes a new level of difficulty for mining
 func ChangeDifficulty(newDifficulty int) {
 	difficulty = newDifficulty
@@ -44,30 +49,30 @@ func (b *Block) IsBlockValid(previousBlock Block) bool {
 	return true
 }
 
-// GenerateGenesisBlock kicks-off the blockchain
-func GenerateGenesisBlock() Block {
+// NewGenesisBlock generates the very first block of the blockchain
+func NewGenesisBlock() Block {
 	var genesisBlock Block
 
 	genesisBlock.Index = 0
 	genesisBlock.Timestamp = time.Now().String()
 	genesisBlock.Data = "Genesis Block"
 	genesisBlock.PrevHash = ""
-	genesisBlock.Difficulty = difficulty
+	genesisBlock.Difficulty = GetDifficulty()
 	genesisBlock.Nonce = ""
 	genesisBlock.Hash = calculateHash(genesisBlock)
 
 	return genesisBlock
 }
 
-// GenerateNextBlock creates a new block and mines it
-func GenerateNextBlock(previousBlock Block, data string) (Block, error) {
+// NewBlock generates a new block and mines it
+func NewBlock(previousBlock Block, data string) (Block, error) {
 	var newBlock Block
 
 	newBlock.Index = previousBlock.Index + 1
 	newBlock.Timestamp = time.Now().String()
 	newBlock.Data = data
 	newBlock.PrevHash = previousBlock.Hash
-	newBlock.Difficulty = difficulty
+	newBlock.Difficulty = GetDifficulty()
 
 	if !isCandidateValid(newBlock, previousBlock) {
 		return newBlock, errors.New("Candidate block is not valid")
