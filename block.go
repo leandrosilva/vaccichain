@@ -1,11 +1,8 @@
 package main
 
 import (
-	"crypto/sha256"
-	"encoding/hex"
 	"errors"
 	"fmt"
-	"strings"
 	"time"
 )
 
@@ -42,7 +39,7 @@ func (b *Block) IsBlockValid(previousBlock Block) bool {
 		return false
 	}
 
-	if b.Hash != calculateHash(*b) {
+	if b.Hash != calculateBlockHash(*b) {
 		return false
 	}
 
@@ -59,7 +56,7 @@ func NewGenesisBlock() Block {
 	genesisBlock.PrevHash = ""
 	genesisBlock.Difficulty = GetDifficulty()
 	genesisBlock.Nonce = ""
-	genesisBlock.Hash = calculateHash(genesisBlock)
+	genesisBlock.Hash = calculateBlockHash(genesisBlock)
 
 	return genesisBlock
 }
@@ -74,7 +71,7 @@ func NewBlock(previousBlock Block, data string) (Block, error) {
 	newBlock.PrevHash = previousBlock.Hash
 	newBlock.Difficulty = GetDifficulty()
 
-	if !isCandidateValid(newBlock, previousBlock) {
+	if !isCandidateBlockValid(newBlock, previousBlock) {
 		return newBlock, errors.New("Candidate block is not valid")
 	}
 
@@ -88,15 +85,15 @@ func mineBlock(newBlock *Block) {
 		hex := fmt.Sprintf("%x", i)
 		newBlock.Nonce = hex
 
-		hash := calculateHash(*newBlock)
-		if isHashValid(hash, newBlock.Difficulty) {
+		hash := calculateBlockHash(*newBlock)
+		if isBlockHashValid(hash, newBlock.Difficulty) {
 			newBlock.Hash = hash
 			break
 		}
 	}
 }
 
-func isCandidateValid(candidateBlock Block, previousBlock Block) bool {
+func isCandidateBlockValid(candidateBlock Block, previousBlock Block) bool {
 	if candidateBlock.Index != previousBlock.Index+1 {
 		return false
 	}
@@ -112,16 +109,11 @@ func isCandidateValid(candidateBlock Block, previousBlock Block) bool {
 	return true
 }
 
-func calculateHash(block Block) string {
+func calculateBlockHash(block Block) string {
 	record := string(block.Index) + block.Timestamp + block.Data + block.PrevHash + block.Nonce
-	hash := sha256.New()
-	hash.Write([]byte(record))
-	hashed := hash.Sum(nil)
-
-	return hex.EncodeToString(hashed)
+	return CalculateHash(record)
 }
 
-func isHashValid(hash string, difficulty int) bool {
-	prefix := strings.Repeat("0", difficulty)
-	return strings.HasPrefix(hash, prefix)
+func isBlockHashValid(hash string, difficulty int) bool {
+	return IsHashValid(hash, difficulty)
 }

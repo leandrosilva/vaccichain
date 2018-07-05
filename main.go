@@ -8,6 +8,7 @@ func main() {
 	config := LoadConfig()
 	fmt.Println(config)
 
-	gblock := InitiateBlockchain()
-	fmt.Println("Genesis Block:", gblock)
+	blockchain := NewBlockchain()
+	fmt.Println("Blockchain ID:", blockchain.ID)
+	fmt.Println("Genesis Block:", blockchain.GetGenesisBlock())
 }

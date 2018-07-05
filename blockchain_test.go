@@ -6,53 +6,53 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestBlockchainEmptyBeforeCreation(t *testing.T) {
-	assert.Equal(t, GetBlockCount(), 0, "Blockchain should be empty")
-}
+func TestBlockchainCreation(t *testing.T) {
+	bc := NewBlockchain()
 
-func TestGenesisBlockCreation(t *testing.T) {
-	gblock := InitiateBlockchain()
-
-	assert.Equal(t, "Genesis Block", gblock.Data, "Failed to create genesis block")
-	assert.Equal(t, 1, GetBlockCount(), "Blockchain should contain only the genesis block")
+	assert.Equal(t, "Genesis Block", bc.GetGenesisBlock().Data, "Failed to create genesis block")
+	assert.Equal(t, 1, bc.GetBlockCount(), "Blockchain should contain only the genesis block")
 }
 
 func TestAddNewBlock(t *testing.T) {
-	gblock := InitiateBlockchain()
+	bc := NewBlockchain()
+	pblock := bc.GetGenesisBlock()
 
-	nblock, err := NewBlock(gblock, "Block 1")
+	nblock, err := NewBlock(pblock, "Block 1")
 	assert.Nil(t, err)
 
-	err = AddBlock(nblock)
+	err = bc.AddBlock(nblock)
 	assert.Nil(t, err)
 
-	assert.Equal(t, 2, GetBlockCount(), "Blockchain should contain 2 blocks")
+	assert.Equal(t, 2, bc.GetBlockCount(), "Blockchain should contain 2 blocks")
 }
 
 func TestNotAddAnyBlockTwice(t *testing.T) {
-	gblock := InitiateBlockchain()
-	err := AddBlock(gblock)
+	bc := NewBlockchain()
+	gblock := bc.GetGenesisBlock()
+	err := bc.AddBlock(gblock)
 	assert.NotNil(t, err)
 }
 
 func TestNotAcceptInvalidCandidateBlockWithEmptyData(t *testing.T) {
-	gblock := InitiateBlockchain()
+	bc := NewBlockchain()
+	gblock := bc.GetGenesisBlock()
 	_, err := NewBlock(gblock, "")
 
 	assert.NotNil(t, err)
-	assert.Equal(t, 1, GetBlockCount(), "Blockchain should have only the genesis block")
+	assert.Equal(t, 1, bc.GetBlockCount(), "Blockchain should have only the genesis block")
 }
 
 func TestNotAcceptInvalidCandidateBlockWithWrongPrevious(t *testing.T) {
-	gblock := InitiateBlockchain()
+	bc := NewBlockchain()
+	gblock := bc.GetGenesisBlock()
 
 	block1, err := NewBlock(gblock, "Block 1")
 	assert.Nil(t, err)
-	err = AddBlock(block1)
+	err = bc.AddBlock(block1)
 	assert.Nil(t, err)
-	assert.Equal(t, 2, GetBlockCount(), "Blockchain should contain 2 blocks")
+	assert.Equal(t, 2, bc.GetBlockCount(), "Blockchain should contain 2 blocks")
 
 	_, err = NewBlock(gblock, "Block 2")
 	assert.Nil(t, err)
-	assert.Equal(t, 2, GetBlockCount(), "Blockchain should still contain 2 blocks")
+	assert.Equal(t, 2, bc.GetBlockCount(), "Blockchain should still contain 2 blocks")
 }
