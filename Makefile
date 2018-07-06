@@ -1,9 +1,9 @@
-APP_NAME := buckychain.exe
+APP_NAME := vaccichain.exe
 
-all: build
+all:
 
-build:
-	@go build -o $(APP_NAME) *.go
+build-server:
+	@go build -o ./server/$(APP_NAME) ./server/*.go
 
-run:
-	@./$(APP_NAME)
+run-server:
+	@cd ./server/ && ./$(APP_NAME)
