@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package vaccichain;
+
+service BlockchainService {
+    rpc GetBlocks (BlocksRequest) returns (BlocksResponse);
+    rpc GetGenesisBlock (GenesisBlockRequest) returns (GenesisBlockResponse);
+    rpc GetLatestBlock (LatestBlockRequest) returns (LatestBlockResponse);
+    rpc GetBlockCount (BlockCountRequest) returns (BlockCountResponse);
+    rpc AddBlock (NewBlockRequest) returns (NewBlockResponse);
+    rpc GetBlock (BlockRequest) returns (BlockResponse);
+    rpc GetBlockRange (BlockRangeRequest) returns (BlockRangeResponse);
+}
+
+message BlocksRequest {
+}
+
+message BlocksResponse {
+    repeated BlockMessage blocks = 1;
+}
+
+message GenesisBlockRequest {
+}
+
+message GenesisBlockResponse {
+    BlockMessage genesisBlock = 1;
+}
+
+message LatestBlockRequest {
+}
+
+message LatestBlockResponse {
+    BlockMessage latestBlock = 1;
+}
+
+message BlockCountRequest {
+}
+
+message BlockCountResponse {
+    int64 blockCount = 1;
+}
+
+message NewBlockRequest {
+    BlockMessage newBlock = 1;
+}
+
+message NewBlockResponse {
+    bool   accepted     = 1;
+    string rejectReason = 2;
+}
+
+message BlockRequest {
+    int64  index = 1;
+    string hash  = 2;
+}
+
+message BlockResponse {
+    BlockMessage block = 1;
+}
+
+message BlockRangeRequest {
+    string genesisBlockHash = 1;
+    int64  startingIndex = 2;
+}
+
+message BlockRangeResponse {
+    repeated BlockMessage blocks = 1;
+}
+
+message BlockMessage {
+    int64  index      = 1;
+	string timestamp  = 2;
+	string data       = 3;
+	string hash       = 4;
+	string prevHash   = 5;
+	int32  difficulty = 6;
+	string nonce      = 7;
+}
