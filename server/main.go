@@ -22,7 +22,10 @@ func main() {
 		log.Fatalf("Failed to listen on port %v: %v", config.RPC.Port, err)
 	}
 
+	rpcServer := &RPCServer{}
+	rpcServer.SetBlockchain(blockchain)
+
 	server := grpc.NewServer()
-	pb.RegisterBlockchainServiceServer(server, &RPCServer{})
+	pb.RegisterBlockchainServiceServer(server, rpcServer)
 	server.Serve(listener)
 }
