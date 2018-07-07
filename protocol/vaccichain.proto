@@ -37,7 +37,7 @@ message BlockCountRequest {
 }
 
 message BlockCountResponse {
-    int64 blockCount = 1;
+    int32 blockCount = 1;
 }
 
 message NewBlockRequest {
@@ -50,8 +50,8 @@ message NewBlockResponse {
 }
 
 message BlockRequest {
-    int64  index = 1;
-    string hash  = 2;
+    int32  blockIndex = 1;
+    string blockHash  = 2;
 }
 
 message BlockResponse {
@@ -60,7 +60,7 @@ message BlockResponse {
 
 message BlockRangeRequest {
     string genesisBlockHash = 1;
-    int64  startingIndex = 2;
+    int32  startingIndex = 2;
 }
 
 message BlockRangeResponse {
@@ -68,7 +68,7 @@ message BlockRangeResponse {
 }
 
 message BlockMessage {
-    int64  index      = 1;
+    int32  index      = 1;
 	string timestamp  = 2;
 	string data       = 3;
 	string hash       = 4;

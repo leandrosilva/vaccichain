@@ -51,6 +51,48 @@ func (bc *Blockchain) AddBlock(newBlock Block) error {
 	return nil
 }
 
+// GetBlockByIndex returns a given block by its index
+func (bc *Blockchain) GetBlockByIndex(index int) (Block, error) {
+	if int(index) < 1 || int(index) >= len(bc.blocks) {
+		return Block{}, errors.New("Block index out of blockchain height")
+	}
+
+	return bc.blocks[index], nil
+}
+
+// GetBlockByHash returns a given block by its hash
+func (bc *Blockchain) GetBlockByHash(hash string) (Block, error) {
+	if len(hash) == 0 {
+		return Block{}, errors.New("Empty hash? Are you kidding me?")
+	}
+
+	for i := 0; i < len(bc.blocks); i++ {
+		if bc.blocks[i].Hash == hash {
+			return bc.blocks[i], nil
+		}
+	}
+
+	return Block{}, errors.New("Block not found")
+}
+
+// GetBlockRange returns a range of block starting from the given index provided that the genesis block is right
+func (bc *Blockchain) GetBlockRange(genesisBlockHash string, startingIndex int) ([]Block, error) {
+	if genesisBlockHash != bc.GetGenesisBlock().Hash {
+		return []Block{}, errors.New("Invalid genesis block: " + genesisBlockHash)
+	}
+
+	if startingIndex < 0 || startingIndex >= bc.GetBlockCount() {
+		return []Block{}, errors.New("Invalid starting index: " + string(startingIndex))
+	}
+
+	var blocks []Block
+	for i := startingIndex; i < bc.GetBlockCount(); i++ {
+		blocks = append(blocks, bc.blocks[i])
+	}
+
+	return blocks, nil
+}
+
 // ReplaceChain overrides the current state by the new one
 func (bc *Blockchain) ReplaceChain(givenChain []Block) {
 	if isValidChain(*bc, givenChain) {

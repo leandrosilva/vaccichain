@@ -56,3 +56,67 @@ func TestNotAcceptInvalidCandidateBlockWithWrongPrevious(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 2, bc.GetBlockCount(), "Blockchain should still contain 2 blocks")
 }
+
+func TestGetBlockByIndex(t *testing.T) {
+	bc := NewBlockchain()
+	gblock := bc.GetGenesisBlock()
+
+	block1, err := NewBlock(gblock, "Block 1")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block1)
+	assert.Nil(t, err)
+
+	block2, err := NewBlock(block1, "Block 2")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block2)
+	assert.Nil(t, err)
+
+	b1, err := bc.GetBlockByIndex(2)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, b1.Index)
+}
+
+func TestGetBlockByHash(t *testing.T) {
+	bc := NewBlockchain()
+	gblock := bc.GetGenesisBlock()
+
+	block1, err := NewBlock(gblock, "Block 1")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block1)
+	assert.Nil(t, err)
+
+	block2, err := NewBlock(block1, "Block 2")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block2)
+	assert.Nil(t, err)
+
+	b1, err := bc.GetBlockByHash(block1.Hash)
+	assert.Nil(t, err)
+	assert.Equal(t, block1.Hash, b1.Hash)
+}
+
+func TestGetBlockRange(t *testing.T) {
+	bc := NewBlockchain()
+	gblock := bc.GetGenesisBlock()
+
+	block1, err := NewBlock(gblock, "Block 1")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block1)
+	assert.Nil(t, err)
+
+	block2, err := NewBlock(block1, "Block 2")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block2)
+	assert.Nil(t, err)
+
+	block3, err := NewBlock(block2, "Block 3")
+	assert.Nil(t, err)
+	err = bc.AddBlock(block3)
+	assert.Nil(t, err)
+
+	blocks, err := bc.GetBlockRange(gblock.Hash, 2)
+	assert.Nil(t, err)
+	assert.Equal(t, 2, len(blocks))
+	assert.Equal(t, 2, blocks[0].Index)
+	assert.Equal(t, 3, blocks[1].Index)
+}

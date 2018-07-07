@@ -20,7 +20,7 @@ func ChangeDifficulty(newDifficulty int) {
 
 // Block representation
 type Block struct {
-	Index      int64
+	Index      int
 	Timestamp  string
 	Data       string
 	Hash       string
