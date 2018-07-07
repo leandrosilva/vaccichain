@@ -15,7 +15,7 @@ type Config struct {
 
 // RPC options
 type RPC struct {
-	Port int `json:"port"`
+	Port string `json:"port"`
 }
 
 // LoadConfig loads the config.json file and unmarshals it

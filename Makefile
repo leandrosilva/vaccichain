@@ -4,7 +4,7 @@ PROTOC_PATH := $(GITHUB_PATH)/protocol
 SERVER_PATH := $(GITHUB_PATH)/server
 CLIENT_PATH := $(GITHUB_PATH)/client
 
-SERVER_NAME := vaccichain
+SERVER_NAME := vaccichain.exe
 
 all:
 
